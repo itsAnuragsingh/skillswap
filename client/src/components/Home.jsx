@@ -4,13 +4,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Sun, Moon, LogIn, Book, Users, Video } from 'lucide-react'
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import { useAuth } from "@clerk/clerk-react";
 import { Link } from 'react-router-dom';
+
 
 export default function HomePage() {
   const [theme, setTheme] = useState('light')
   const { isSignedIn } = useAuth();
+  const { user } = useUser();
 
   // Add this useEffect to sync theme with localStorage and body class
   useEffect(() => {
@@ -54,7 +56,7 @@ export default function HomePage() {
               {isSignedIn ? (
                 <UserButton afterSignOutUrl="/" />
               ) : (
-                <SignInButton mode="modal">
+                <SignInButton mode="modal" afterSignInUrl="/">
                   <Button>
                     <LogIn className="mr-2 h-4 w-4" /> Get Started
                     
@@ -66,21 +68,23 @@ export default function HomePage() {
           </div>
         </div>
       </nav>
+      
 
       {/* Hero Section */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl font-extrabold sm:text-5xl md:text-6xl">
-              Welcome to SkillSwap
+              Welcome  {isSignedIn ? user.fullName : 'to SkillSwap'}
             </h1>
             <p className="mt-3 max-w-md mx-auto text-xl text-muted-foreground sm:text-2xl md:mt-5 md:max-w-3xl">
               Share your skills, learn from others, and grow together in our collaborative community.
             </p>
             <div className="mt-10 flex justify-center">
-            <SignInButton>
+            { isSignedIn ? <Link to="/dashboard"><Button>Go to Dashboard</Button></Link>:
+             <SignInButton mode='modal'>
               <Button size="lg" className="mr-4">Get Started</Button>
-              </SignInButton>  
+              </SignInButton>  }
             </div>
           </div>
         </div>
@@ -128,7 +132,7 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="bg-primary text-primary-foreground">
+          {!isSignedIn ?<Card className="bg-primary text-primary-foreground">
             <CardHeader>
               <CardTitle className="text-2xl">Ready to start your skill-swapping journey?</CardTitle>
               <CardDescription className="text-primary-foreground/80">Join our community today and unlock your potential!</CardDescription>
@@ -144,7 +148,7 @@ export default function HomePage() {
                 </Button>
               </form>
             </CardContent>
-          </Card>
+          </Card> : <Link to="/community"><Button>Community</Button></Link>}
         </div>
       </section>
 

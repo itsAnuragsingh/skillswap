@@ -10,21 +10,23 @@ import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Link } from 'react-router-dom'
+import { useUser } from '@clerk/clerk-react'
 
 
 const menuItems = [
-  { icon: Home, label: 'Dashboard' },
-  { icon: Book, label: 'My Skills' },
-  { icon: Users, label: 'Collaborations' },
-  { icon: DollarSign, label: 'Transactions' },
-  { icon: Video, label: 'Video Sessions' },
+  { icon: Home, label: 'Home', path: '/' },
+  { icon: Users, label: 'Community', path: '/community' },
   { icon: Settings, label: 'Settings' },
 ]
 
+
+
 export default function Dashboard({ initialUserData = {} }) {
+  const { user } = useUser()
   const [userData, setUserData] = useState({
-    name: "Anurag Singh",
-    email: "anurag@example.com",
+    name: user.fullName,
+    email: user.emailAddresses[0].emailAddress,
     credits: 25,
     skills: [
       { id: 1, name: "JavaScript", category: "Programming", progress: 75 },
@@ -84,20 +86,20 @@ export default function Dashboard({ initialUserData = {} }) {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="font-semibold">{userData.name}</h2>
-            <p className="text-sm text-gray-500">{userData.email}</p>
+            <h2 className="font-semibold">{user.fullName}</h2>
+            <p className="text-sm text-gray-500">{user.emailAddresses[0].emailAddress}</p>
           </div>
         </div>
         <nav className="flex-1">
           {menuItems.map((item, index) => (
-            <a
+            <Link
               key={index}
-              href="#"
+              to={item.path}
               className="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-colors duration-200"
             >
               <item.icon className="h-5 w-5 mr-3" />
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <div className="p-4 border-t">
@@ -129,8 +131,8 @@ export default function Dashboard({ initialUserData = {} }) {
                   <AvatarFallback>{userData.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="text-2xl font-bold">{userData.name}</h2>
-                  <p className="text-gray-500">{userData.email}</p>
+                  <h2 className="text-2xl font-bold">{user.fullName}</h2>
+                  <p className="text-gray-500">{user.emailAddresses[0].emailAddress}</p>
                 </div>
                 <div className="ml-auto">
                   <Dialog open={isEditProfileOpen} onOpenChange={setIsEditProfileOpen}>

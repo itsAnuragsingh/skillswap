@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Video, FileText, Send, Phone, Briefcase, Share2, Plus, X, MessageCircle, ThumbsUp, Link as LinkIcon, PlusCircle, Users, Trash2, Github } from 'lucide-react'
+import { Link } from 'react-router-dom';
 
 // Mock data for demonstration
 const mockUsers = [
@@ -239,80 +240,34 @@ export default function Community() {
   const otherProjects = projects.filter(p => p.author !== currentUser)
 
   return (
+    <>
+    <nav className="border-b">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <span className="text-2xl font-bold">Community</span>
+            </div>
+            <div className="flex items-center space-x-4">
+                  <Link to="/">
+                    <Button>Home</Button>
+                  </Link>
+                  <Link to="/dashboard">
+                    <Button>Dashboard</Button>
+                  </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Community</h1>
+            
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-5 mb-4">
-          <TabsTrigger value="video"><Video className="mr-2 h-4 w-4" /> Video Call</TabsTrigger>
-          <TabsTrigger value="notes"><FileText className="mr-2 h-4 w-4" /> Notes</TabsTrigger>
           <TabsTrigger value="projects"><Briefcase className="mr-2 h-4 w-4" /> Projects</TabsTrigger>
           <TabsTrigger value="resources"><Share2 className="mr-2 h-4 w-4" /> Resources</TabsTrigger>
           <TabsTrigger value="forum"><MessageCircle className="mr-2 h-4 w-4" /> Forum</TabsTrigger>
         </TabsList>
-        <TabsContent value="video">
-          <Card>
-            <CardHeader>
-              <CardTitle>Video Call</CardTitle>
-              <CardDescription>Start a video call with community members</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {isInCall ? (
-                <div className="aspect-video bg-gray-200 mb-4 rounded-lg flex items-center justify-center">
-                  <Video className="h-12 w-12 text-gray-400" />
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <p className="mb-4">Click the button below to start a video call</p>
-                </div>
-              )}
-            </CardContent>
-            <CardFooter className="flex justify-center">
-              {isInCall ? (
-                <Button variant="destructive" onClick={handleEndCall}>End Call</Button>
-              ) : (
-                <Button onClick={handleStartCall}><Phone className="mr-2 h-4 w-4" /> Start Call</Button>
-              )}
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        <TabsContent value="notes">
-          <Card>
-            <CardHeader>
-              <CardTitle>Shared Notes</CardTitle>
-              <CardDescription>Collaborate on ideas and projects</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <Input
-                  placeholder="Note Title"
-                  value={newNote.title}
-                  onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
-                  className="mb-2"
-                />
-                <Textarea
-                  placeholder="Note Content"
-                  value={newNote.content}
-                  onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
-                  className="mb-2"
-                />
-                <Button onClick={handleAddNote}>Add Note</Button>
-              </div>
-              <ScrollArea className="h-[300px]">
-                {notes.map((note) => (
-                  <Card key={note.id} className="mb-4">
-                    <CardHeader>
-                      <CardTitle>{note.title}</CardTitle>
-                      <CardDescription>By {note.author} on {new Date(note.timestamp).toLocaleString()}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p>{note.content}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        
         <TabsContent value="projects">
           <div className="flex">
             <Tabs defaultValue="your-projects" className="flex-1">
@@ -647,5 +602,6 @@ export default function Community() {
         </TabsContent>
       </Tabs>
     </div>
+    </>
   )
 }
