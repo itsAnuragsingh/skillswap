@@ -4,22 +4,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Sun, Moon, LogIn, Book, Users, Video } from 'lucide-react'
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   const [theme, setTheme] = useState('light')
+  const { isSignedIn } = useAuth();
 
+  // Add this useEffect to sync theme with localStorage and body class
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light'
-    setTheme(savedTheme)
-    document.documentElement.classList.toggle('dark', savedTheme === 'dark')
-  }, [])
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    document.body.classList.toggle('dark', savedTheme === 'dark');
+  }, []);
 
+  // Add this function to toggle the theme
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-    document.documentElement.classList.toggle('dark', newTheme === 'dark')
-  }
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.body.classList.toggle('dark', newTheme === 'dark');
+  };
 
   return (
     <div className={`min-h-screen bg-background text-foreground ${theme}`}>
@@ -31,13 +37,31 @@ export default function HomePage() {
               <span className="text-2xl font-bold">SkillSwap</span>
             </div>
             <div className="flex items-center space-x-4">
+              {isSignedIn && (
+                <>
+                  <Link to="/dashboard">
+                    <Button variant="ghost">Dashboard</Button>
+                  </Link>
+                  <Link to="/community">
+                    <Button variant="ghost">Community</Button>
+                  </Link>
+                </>
+              )}
               <Button variant="outline" onClick={toggleTheme}>
                 {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                 <span className="sr-only">Toggle theme</span>
               </Button>
-              <Button>
-                <LogIn className="mr-2 h-4 w-4" /> Login
-              </Button>
+              {isSignedIn ? (
+                <UserButton afterSignOutUrl="/" />
+              ) : (
+                <SignInButton mode="modal">
+                  <Button>
+                    <LogIn className="mr-2 h-4 w-4" /> Get Started
+                    
+                  </Button>
+                </SignInButton>
+
+              )}
             </div>
           </div>
         </div>
@@ -54,8 +78,9 @@ export default function HomePage() {
               Share your skills, learn from others, and grow together in our collaborative community.
             </p>
             <div className="mt-10 flex justify-center">
+            <SignInButton>
               <Button size="lg" className="mr-4">Get Started</Button>
-              <Button size="lg" variant="outline">Learn More</Button>
+              </SignInButton>  
             </div>
           </div>
         </div>
